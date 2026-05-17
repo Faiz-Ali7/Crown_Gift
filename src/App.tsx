@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Flower, 
   ShoppingBag, 
@@ -12,130 +12,21 @@ import {
   Truck, 
   Heart, 
   Gift,
-  Clock,
-  Menu,
-  X
+  Clock
 } from 'lucide-react';
 
+// --- Types & Constants ---
+import { ViewState } from './types';
+import { PRODUCTS } from './constants';
+
 // --- Components ---
+import { Navbar } from './components/Navbar';
+import { Hero } from './components/Hero';
+import { CollectionPage } from './components/CollectionPage';
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+// --- Sections ---
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'glass py-4 shadow-sm' : 'bg-transparent py-8'}`}>
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <div className="flex-1 hidden md:flex gap-8 items-center text-[10px] uppercase tracking-[0.3em] font-semibold text-sage">
-          <a href="#collections" className="hover:text-botanical transition-colors">Collections</a>
-          <a href="#about" className="hover:text-botanical transition-colors">Bespoke</a>
-          <a href="#about" className="hover:text-botanical transition-colors">The Studio</a>
-        </div>
-
-        <div className="flex flex-col items-center">
-          <h1 className="font-serif text-2xl md:text-3xl tracking-[0.1em] font-medium leading-none">CROWN GARDEN</h1>
-          <p className="text-[10px] md:text-[11px] uppercase tracking-[0.3em] font-light mt-1 opacity-60">Islamabad</p>
-        </div>
-
-        <div className="flex-1 hidden md:flex gap-8 items-center justify-end text-xs uppercase tracking-[0.2em] font-medium opacity-70">
-          <a href="#contact" className="hover:opacity-100 transition-opacity">Contact</a>
-          <button className="flex items-center gap-2 hover:opacity-100 transition-opacity cursor-pointer">
-            <ShoppingBag size={14} />
-            <span>(0)</span>
-          </button>
-        </div>
-
-        <div className="md:hidden">
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 cursor-pointer">
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-ivory border-b border-champagne/20 overflow-hidden"
-          >
-            <div className="flex flex-col p-8 gap-6 text-center text-sm uppercase tracking-[0.2em] font-medium">
-              <a href="#collections" onClick={() => setIsMobileMenuOpen(false)}>Collections</a>
-              <a href="#about" onClick={() => setIsMobileMenuOpen(false)}>Our Story</a>
-              <a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>Contact</a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
-  );
-};
-
-const Hero = () => {
-  const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, 150]);
-  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
-
-  return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
-      <motion.div style={{ y }} className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80&w=2000" 
-          alt="Luxury Floral Showcase"
-          className="w-full h-full object-cover"
-          referrerPolicy="no-referrer"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-botanical/20 via-transparent to-ivory/60" />
-      </motion.div>
-
-      <motion.div 
-        style={{ opacity }}
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 text-center px-6 glass rounded-deep p-12 md:p-24 max-w-6xl mx-6"
-      >
-        <span className="block text-[10px] md:text-xs uppercase tracking-[0.4em] font-bold text-sage mb-6">Handcrafted with Emotion</span>
-        <h2 className="font-serif text-5xl md:text-8xl font-light tracking-tight leading-[1] max-w-5xl mx-auto mb-8">
-          Flowers, Cakes <br /> <span className="italic font-light text-sage">& Gifts</span> Crafted With Love
-        </h2>
-        <p className="text-sm text-sage max-w-md mx-auto mb-10 leading-relaxed font-light">
-          A premium digital florist studio offering artisan arrangements and luxury gifting experiences in the heart of Islamabad.
-        </p>
-        
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-          <button className="bg-botanical text-ivory px-10 py-4 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-botanical/90 transition-colors cursor-pointer">
-            Order Now
-          </button>
-          <button className="border border-botanical text-botanical px-10 py-4 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-botanical hover:text-ivory transition-all cursor-pointer">
-            The Collection
-          </button>
-        </div>
-      </motion.div>
-
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.4 }}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <div className="w-[1px] h-12 bg-botanical animate-bounce" />
-        <span className="text-[10px] uppercase tracking-widest font-medium">Scroll</span>
-      </motion.div>
-    </section>
-  );
-};
-
-const CollectionBento = () => {
+const CollectionBento = ({ setView }: { setView: (v: ViewState) => void }) => {
   const categories = [
     { 
       title: "Flower Bouquets", 
@@ -170,7 +61,12 @@ const CollectionBento = () => {
           <span className="text-xs uppercase tracking-[0.3em] font-medium opacity-60">The Artisan Gallery</span>
           <h3 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light mt-4 leading-tight">Curated with <span className="italic">precision</span>.</h3>
         </div>
-        <a href="#" className="text-xs uppercase tracking-[0.2em] font-semibold border-b border-botanical pb-1 hover:opacity-70 transition-opacity">View All Collections</a>
+        <button 
+          onClick={() => setView('collection')}
+          className="text-xs uppercase tracking-[0.2em] font-semibold border-b border-botanical pb-1 hover:opacity-70 transition-opacity cursor-pointer"
+        >
+          View All Collections
+        </button>
       </div>
 
       <div className="grid grid-cols-12 gap-6">
@@ -181,6 +77,7 @@ const CollectionBento = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: idx * 0.1 }}
+            onClick={() => setView('collection')}
             className={`relative group overflow-hidden cursor-pointer glass rounded-[30px] ${cat.size}`}
           >
             <div className="absolute inset-0 bg-botanical/5 group-hover:bg-botanical/10 transition-all duration-700 z-10" />
@@ -204,21 +101,21 @@ const CollectionBento = () => {
 };
 
 const BestSellers = () => {
-  const products = [
-    { name: "Velvet Blush", price: "$85", img: "https://images.unsplash.com/photo-1523626797181-8c5ae80d40c2?auto=format&fit=crop&q=80&w=600" },
-    { name: "Champagne Dreams", price: "$120", img: "https://images.unsplash.com/photo-1563241527-3004b7be0686?auto=format&fit=crop&q=80&w=600" },
-    { name: "Eternal Lily", price: "$95", img: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=600" },
-    { name: "Midnight Orchid", price: "$145", img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=600" },
-  ];
+  const products = PRODUCTS.filter(p => p.tag === 'Best Seller' || p.tag === 'Premium').slice(0, 4);
 
   return (
-    <section className="bg-beige/30 py-32 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 mb-16">
-        <span className="text-xs uppercase tracking-[0.3em] font-medium opacity-60">Seasonal Favorites</span>
-        <h3 className="font-serif text-4xl md:text-5xl font-light mt-4">The Best Sellers</h3>
+    <section className="bg-white/30 py-32 overflow-hidden border-y border-botanical/5">
+      <div className="max-w-7xl mx-auto px-6 mb-16 flex justify-between items-end">
+        <div>
+          <span className="text-xs uppercase tracking-[0.3em] font-medium opacity-60">Seasonal Favorites</span>
+          <h3 className="font-serif text-4xl md:text-5xl font-light mt-4">The Best Sellers</h3>
+        </div>
+        <div className="flex gap-4">
+           {/* Slider controls could go here */}
+        </div>
       </div>
       
-      <div className="px-6 flex gap-8 overflow-x-auto no-scrollbar scroll-smooth pb-12">
+      <div className="px-6 flex gap-8 overflow-x-auto no-scrollbar scroll-smooth pb-12 max-w-7xl mx-auto">
         {products.map((p, idx) => (
           <motion.div 
             key={idx}
@@ -226,30 +123,31 @@ const BestSellers = () => {
             whileHover={{ y: -10 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <div className="aspect-[3/4] overflow-hidden mb-6 bg-ivory shadow-lg">
+            <div className="aspect-[3/4] overflow-hidden mb-6 bg-ivory shadow-lg rounded-[24px] relative group">
               <img 
                 src={p.img} 
                 alt={p.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
               />
+              <div className="absolute inset-0 bg-botanical/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                 <button className="bg-ivory text-botanical px-6 py-2 rounded-full text-[10px] uppercase tracking-widest font-bold">Quick View</button>
+              </div>
             </div>
             <div className="flex justify-between items-start">
               <div>
                 <h4 className="font-serif text-xl">{p.name}</h4>
-                <p className="text-[10px] uppercase tracking-widest mt-1 opacity-60">Handcrafted Bouquet</p>
+                <p className="text-[10px] uppercase tracking-widest mt-1 opacity-60">{p.category === 'flowers' ? 'Bespoke Bouquet' : 'Artisan Piece'}</p>
               </div>
-              <span className="text-sm font-medium">{p.price}</span>
+              <span className="text-sm font-semibold">{p.price}</span>
             </div>
-            <button className="w-full mt-6 py-3 border border-botanical/20 text-[10px] uppercase tracking-widest font-semibold hover:bg-botanical hover:text-ivory transition-all cursor-pointer">
-              Add to Cart
-            </button>
           </motion.div>
         ))}
       </div>
     </section>
   );
 };
+
 
 const ArtisanStory = () => {
   return (
@@ -262,7 +160,7 @@ const ArtisanStory = () => {
       >
         <div className="aspect-[16/10] overflow-hidden shadow-2xl">
           <img 
-            src="https://images.unsplash.com/photo-1562690862-30bb0aff65c4?auto=format&fit=crop&q=80&w=1200" 
+            src="https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&q=80&w=1200" 
             alt="Artisan Story"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
@@ -270,7 +168,7 @@ const ArtisanStory = () => {
         </div>
         <div className="absolute -bottom-10 -right-10 hidden lg:block w-64 h-64 border border-botanical/10 p-4 bg-ivory shadow-xl">
           <img 
-            src="https://images.unsplash.com/photo-1518133835878-5a93cc3f89e5?auto=format&fit=crop&q=80&w=400" 
+            src="https://images.unsplash.com/photo-1523626797181-8c5ae80d40c2?auto=format&fit=crop&q=80&w=600" 
             alt="Flower Detail"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
@@ -550,20 +448,51 @@ const Footer = () => {
 };
 
 export default function App() {
+  const [view, setView] = useState<ViewState>('home');
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [view]);
+
   return (
-    <main className="font-sans antialiased text-botanical overflow-x-hidden selection:bg-champagne selection:text-botanical relative">
+    <main className="font-sans antialiased text-botanical overflow-x-hidden selection:bg-champagne selection:text-botanical relative min-h-screen">
       <div className="fixed -top-10 -left-10 w-[500px] h-[500px] bg-blush rounded-full blur-[120px] opacity-40 z-0" />
       <div className="fixed top-1/2 -right-10 w-[400px] h-[400px] bg-[#E8EBD8] rounded-full blur-[120px] opacity-40 z-0" />
+      
       <div className="relative z-10">
-        <Navbar />
-        <Hero />
-        <CollectionBento />
-        <BestSellers />
-        <ArtisanStory />
-        <Occasions />
-        <TrustSection />
-        <Reviews />
-        <CinematicMarquee />
+        <Navbar currentView={view} setView={setView} />
+        
+        <AnimatePresence mode="wait">
+          {view === 'home' ? (
+            <motion.div
+              key="home"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Hero setView={setView} />
+              <CollectionBento setView={setView} />
+              <BestSellers />
+              <ArtisanStory />
+              <Occasions />
+              <TrustSection />
+              <Reviews />
+              <CinematicMarquee />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="collection"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <CollectionPage />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <Contact />
         <Footer />
       </div>
